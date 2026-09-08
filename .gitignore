@@ -1,0 +1,33 @@
+# Segredos e sessões reais — nunca versionar. Recrie no computador novo
+# a partir dos arquivos .env.example.
+.env
+.env.local
+agent/.env
+se7en-robot/.env
+
+# Sessão de WhatsApp do WAHA (equivalente a estar logado) — escaneie o QR
+# de novo no computador novo em vez de copiar isto.
+.sessions/
+
+# Sessão logada do portal Se7en Pay (Playwright storageState) — rode
+# `npm run login` de novo no computador novo em vez de copiar isto.
+se7en-robot/storage/
+
+# Chave do robô hardcoded neste arquivo — recrie a partir do .example.
+se7en-robot/chrome-extension/popup.js
+
+# Dependências, logs e lixo de execução.
+node_modules/
+logs/*.log
+*.log
+.DS_Store
+
+# Artefatos abandonados do open-wa (substituído pelo WAHA) — não faz
+# parte do sistema atual.
+/index.js
+/package.json
+/package-lock.json
+/.node-persist/
+/_IGNORE_diag/
+/open-wa-default.postman_collection.json
+/open-wa-default.sw_col.json

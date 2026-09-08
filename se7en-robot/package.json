@@ -1,0 +1,20 @@
+{
+  "name": "se7en-robot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Servico local que automatiza o portal vendas.se7enpay.com.br (login com TOTP + acoes de equipamentos) e expoe uma API HTTP local para o bot do WhatsApp.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --use-bundled-ca --env-file=.env src/server.js",
+    "whatsapp": "node --use-bundled-ca --env-file=.env src/whatsapp-bot.js",
+    "setup-secrets": "node --use-bundled-ca --env-file=.env scripts/setup-secrets.js",
+    "login": "node --use-bundled-ca --env-file=.env scripts/force-login.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "keytar": "^7.9.0",
+    "openai": "^7.6.0",
+    "otplib": "^12.0.1",
+    "playwright": "^1.47.0"
+  }
+}

@@ -1,0 +1,24 @@
+# Glossário
+
+- **LA** — Licenciado. O parceiro que cadastra e atende estabelecimentos.
+- **EC** — Estabelecimento (o cliente final/comerciante, dono do CNPJ cadastrado).
+- **F3** — Fornecedor 3, também chamado Cappta. Sub-adquirente com split de recebíveis.
+- **F4** — Fornecedor 4, também chamado Adquirente. Taxas competitivas, sem split.
+- **F5** — Fornecedor 5, também chamado Link de pagamento ou Confraonline. Cobrança à distância.
+- **F6 / F6M / F6C** — Fornecedor 6, também chamado Confrapix ou Bolepix. Recebimento via Pix/boleto. F6M e F6C são dois provedores diferentes do mesmo produto; só o F6C oferece Bolepix.
+- **F7** — Fornecedor 7, também chamado WeQi. Máquinas com chip de dados móveis próprio.
+- **TPV** — Total Payment Volume (volume total transacionado).
+- **D+1 / D1** — Recebimento no próximo dia útil.
+- **D+14** — Recebimento 14 dias após a venda (usado no F5, por risco de chargeback).
+- **Split de recebíveis** — Mecanismo do F3 que retém o valor por até 28 dias antes de repassar ao EC, permitindo economia tributária via Pix/boleto direto a beneficiários.
+- **Cash in** — Receber valores via Pix ou boleto (F6).
+- **Cash out** — Utilizar/sacar o saldo já disponível na conta digital (F6).
+- **TEF** — Integração por número lógico para estabelecimentos que já têm sistema/PDV próprio (evita custo de máquina).
+- **Chamado / Tíquete** — Ticket de suporte aberto no portal, organizado por fila (área + subcategoria).
+- **Fila** — Categoria de destino de um chamado (ex: "Back Office - cadastral - alteração cadastral"). Ver [chamados/resumo-filas.md](chamados/resumo-filas.md).
+- **SLA** — Tempo de resposta esperado para um chamado; em média 3 dias úteis, com prioridade para chamados financeiros.
+- **Análise de risco** — Status intermediário de cadastro que exige comprovação de que o estabelecimento é real (fotos, contrato de locação, etc).
+- **Biometria facial** — Etapa de validação de identidade exigida em alguns cadastros (F3, F5, F6).
+- **App Se7en Gestão** — Aplicativo de gestão usado pelo licenciado (LA).
+- **App Se7en Empresas** — Aplicativo usado pelo estabelecimento (EC) para movimentar valores, configurar split, gerar Pix, etc.
+- **Dispositivo seguro** — Aparelho cadastrado no primeiro acesso; login de outro aparelho bloqueia o acesso por segurança.

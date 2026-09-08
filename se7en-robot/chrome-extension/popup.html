@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Se7en Pay — Login</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      width: 260px;
+      padding: 16px;
+      background: #f4f6f8;
+    }
+    h1 {
+      font-size: 14px;
+      margin: 0 0 12px;
+      color: #202124;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      background: #0f9d8f;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #9aa0a6;
+      cursor: default;
+    }
+    #status {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #5f6368;
+      min-height: 32px;
+      white-space: pre-line;
+    }
+    #status.erro {
+      color: #c5221f;
+    }
+    #status.sucesso {
+      color: #188038;
+    }
+  </style>
+</head>
+<body>
+  <h1>Se7en Pay</h1>
+  <button id="loginBtn">Login automático</button>
+  <div id="status"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

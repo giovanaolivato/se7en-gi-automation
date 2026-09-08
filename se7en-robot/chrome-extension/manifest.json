@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Se7en Pay — Login Automático",
+  "version": "1.0.0",
+  "description": "Preenche login + código do autenticador no portal Se7en Pay com um clique, usando as credenciais salvas no robô local (127.0.0.1).",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": ["activeTab", "scripting", "tabs"],
+  "host_permissions": [
+    "https://vendas.se7enpay.com.br/*",
+    "http://127.0.0.1:3002/*"
+  ]
+}

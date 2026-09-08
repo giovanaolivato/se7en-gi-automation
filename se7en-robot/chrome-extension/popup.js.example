@@ -1,0 +1,212 @@
+// Chave compartilhada do robo local (mesma do se7en-robot/.env). So' vale
+// pra chamadas em 127.0.0.1 nesta mesma maquina — nunca sai daqui.
+const ROBOT_KEY = 'COLE_AQUI_A_MESMA_CHAVE_DO_ROBOT_SHARED_KEY_NO_ENV';
+const ROBOT_URL = 'http://127.0.0.1:3002';
+const PORTAL_LOGIN_URL = 'https://vendas.se7enpay.com.br/login';
+
+const statusEl = document.getElementById('status');
+const btn = document.getElementById('loginBtn');
+
+function setStatus(text, kind) {
+  statusEl.textContent = text;
+  statusEl.className = kind || '';
+}
+
+async function chamarRobo(path) {
+  const resp = await fetch(`${ROBOT_URL}${path}`, {
+    headers: { 'x-robot-key': ROBOT_KEY },
+  });
+  if (!resp.ok) {
+    const body = await resp.json().catch(() => ({}));
+    throw new Error(body.erro || `Robô respondeu ${resp.status}. Ele está rodando? (npm start / launchd)`);
+  }
+  return resp.json();
+}
+
+function getActiveTab() {
+  return new Promise((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => resolve(tabs[0]));
+  });
+}
+
+function waitTabComplete(tabId) {
+  return new Promise((resolve) => {
+    function listener(id, info) {
+      if (id === tabId && info.status === 'complete') {
+        chrome.tabs.onUpdated.removeListener(listener);
+        resolve();
+      }
+    }
+    chrome.tabs.onUpdated.addListener(listener);
+  });
+}
+
+// --- funcoes injetadas na aba real do portal (rodam la', nao aqui) ---
+
+function fnPreencherCredenciais(email, password) {
+  function setNativeValue(el, value) {
+    const proto = el.tagName === 'TEXTAREA' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+    const setter = Object.getOwnPropertyDescriptor(proto, 'value').set;
+    setter.call(el, value);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  const emailInput = document.querySelector('input[name="email"]');
+  const passwordInput = document.querySelector('input[name="password"]');
+  if (!emailInput || !passwordInput) {
+    return { ok: false, erro: 'Campos de e-mail/senha não encontrados. Você está na página de login?' };
+  }
+  setNativeValue(emailInput, email);
+  setNativeValue(passwordInput, password);
+  return { ok: true };
+}
+
+function fnClicarEntrar() {
+  const btnEl = [...document.querySelectorAll('button')].find((b) => b.textContent.trim().toLowerCase() === 'entrar');
+  if (!btnEl) return { ok: false, erro: 'Botão "Entrar" não encontrado.' };
+  if (btnEl.disabled) return { ok: false, aguardando: true };
+  btnEl.click();
+  return { ok: true };
+}
+
+function fnCheckOtpField() {
+  const single = document.querySelector(
+    'input[maxlength="6"], input[name*="otp" i], input[name*="code" i], input[name*="token" i]'
+  );
+  if (single) return { found: true, mode: 'single' };
+  const digits = document.querySelectorAll('input[maxlength="1"]');
+  if (digits.length >= 6) return { found: true, mode: 'digits' };
+  return { found: false };
+}
+
+function fnPreencherOtp(code, mode) {
+  function setNativeValue(el, value) {
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+    setter.call(el, value);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  if (mode === 'single') {
+    const el = document.querySelector(
+      'input[maxlength="6"], input[name*="otp" i], input[name*="code" i], input[name*="token" i]'
+    );
+    if (!el) return { ok: false, erro: 'Campo de código sumiu da tela.' };
+    setNativeValue(el, code);
+  } else {
+    const digits = document.querySelectorAll('input[maxlength="1"]');
+    if (digits.length < 6) return { ok: false, erro: 'Campos de código sumiram da tela.' };
+    for (let i = 0; i < 6; i++) setNativeValue(digits[i], code[i]);
+  }
+  const confirmBtn = [...document.querySelectorAll('button')].find((b) =>
+    /(confirmar|validar|verificar|entrar|continuar)/i.test(b.textContent)
+  );
+  if (confirmBtn) confirmBtn.click();
+  return { ok: true };
+}
+
+function fnDetectarTela() {
+  // Checa o DOM de verdade em vez de confiar so' na URL: o portal e' uma
+  // SPA que pode redirecionar via JS (sessao ja valida) DEPOIS do evento
+  // "complete" da aba, entao checar location.pathname logo apos navegar
+  // pode pegar um instante ainda desatualizado.
+  if (document.querySelector('input[name="email"]') && document.querySelector('input[name="password"]')) {
+    return { tela: 'login' };
+  }
+  if (!location.pathname.includes('/login')) {
+    return { tela: 'logado' };
+  }
+  return { tela: 'indefinido' };
+}
+
+// --- orquestracao ---
+
+async function executarNaAba(tabId, func, args = []) {
+  const [{ result }] = await chrome.scripting.executeScript({ target: { tabId }, func, args });
+  return result;
+}
+
+async function poll(fn, { timeoutMs = 15000, intervalMs = 400 } = {}) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const result = await fn();
+    if (result) return result;
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+  throw new Error('Tempo esgotado esperando a página reagir.');
+}
+
+async function detectarTela(tabId) {
+  return poll(
+    async () => {
+      const r = await executarNaAba(tabId, fnDetectarTela);
+      return r.tela !== 'indefinido' ? r : null;
+    },
+    { timeoutMs: 5000, intervalMs: 300 }
+  ).catch(() => ({ tela: 'indefinido' }));
+}
+
+async function fazerLogin() {
+  btn.disabled = true;
+  try {
+    setStatus('Verificando robô local...');
+    // "ping" leve: se o robo nao estiver de pe, isso ja falha rapido com
+    // mensagem clara em vez de travar no meio do fluxo.
+    const health = await chamarRobo('/health').catch(() => null);
+    if (!health?.ok) throw new Error('Robô local não respondeu. Confirma que o serviço está rodando (launchd).');
+
+    let tab = await getActiveTab();
+    if (!tab?.url?.startsWith('https://vendas.se7enpay.com.br')) {
+      setStatus('Abrindo o portal...');
+      await chrome.tabs.update(tab.id, { url: PORTAL_LOGIN_URL });
+      await waitTabComplete(tab.id);
+      tab = await getActiveTab();
+    }
+
+    setStatus('Verificando a tela...');
+    const estado = await detectarTela(tab.id);
+    if (estado.tela === 'logado') {
+      setStatus('Você já está logado. ✅', 'sucesso');
+      btn.disabled = false;
+      return;
+    }
+    if (estado.tela !== 'login') {
+      throw new Error('Não consegui identificar a tela nesta aba. Abra a página de login do portal e tente de novo.');
+    }
+
+    setStatus('Buscando credenciais salvas...');
+    const creds = await chamarRobo('/login-helper');
+    if (!creds.ok) throw new Error(creds.erro || 'Falha ao buscar credenciais.');
+
+    setStatus('Preenchendo e-mail e senha...');
+    const fillResult = await executarNaAba(tab.id, fnPreencherCredenciais, [creds.email, creds.password]);
+    if (!fillResult.ok) throw new Error(fillResult.erro);
+
+    setStatus('Aguardando o botão "Entrar" habilitar...');
+    await poll(async () => {
+      const r = await executarNaAba(tab.id, fnClicarEntrar);
+      if (r.ok) return true;
+      if (r.erro) throw new Error(r.erro);
+      return false; // ainda desabilitado, continua tentando
+    });
+
+    setStatus('Aguardando tela do código do autenticador...');
+    const otpField = await poll(async () => {
+      const r = await executarNaAba(tab.id, fnCheckOtpField);
+      return r.found ? r : null;
+    });
+
+    setStatus('Gerando código do autenticador...');
+    const totp = await chamarRobo('/login-helper/totp');
+    if (!totp.ok) throw new Error(totp.erro || 'Falha ao gerar código TOTP.');
+
+    setStatus('Preenchendo código...');
+    const otpResult = await executarNaAba(tab.id, fnPreencherOtp, [totp.code, otpField.mode]);
+    if (!otpResult.ok) throw new Error(otpResult.erro);
+
+    setStatus('Login enviado! Aguarde a página carregar (pode demorar, o backend é lento). ✅', 'sucesso');
+  } catch (err) {
+    setStatus(`Erro: ${err.message}`, 'erro');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+btn.addEventListener('click', fazerLogin);

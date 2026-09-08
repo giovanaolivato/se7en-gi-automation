@@ -1,0 +1,60 @@
+[
+  {
+    "id": "tabela-planos",
+    "nome": "Tabela de planos de taxas (CPAG)",
+    "descricao": "Planilha com as taxas por bandeira e parcelamento de cada plano CPAG.",
+    "tipo": "documento",
+    "arquivo": "arquivos/tabela-planos-se7en.xlsx",
+    "mimetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "filename": "Tabela de planos Se7en.xlsx"
+  },
+  {
+    "id": "video-primeiro-acesso-app-empresas",
+    "nome": "Vídeo: primeiro acesso ao app Empresas",
+    "descricao": "Passo a passo em vídeo de como o estabelecimento faz o primeiro acesso ao app Empresas (com authenticator).",
+    "tipo": "link",
+    "url": "https://drive.google.com/file/d/127Ab6NiNippxa7uS_Ub3VsHq_FzFdoOX/view?usp=drivesdk"
+  },
+  {
+    "id": "video-configurar-split-28-dias",
+    "nome": "Vídeo: configurar acúmulo de 28 dias no split",
+    "descricao": "Passo a passo em vídeo de como configurar o acúmulo de 28 dias do split no app Empresas.",
+    "tipo": "link",
+    "url": "https://drive.google.com/file/d/1X2pyxS3HoBWkoDYbFOJA-QwSafqwTZhc/view?usp=drivesdk"
+  },
+  {
+    "id": "video-boleto-pix-split",
+    "nome": "Vídeo: gerar boleto e Pix via split",
+    "descricao": "Passo a passo em vídeo de como gerar boleto e Pix usando o saldo acumulado no split.",
+    "tipo": "link",
+    "url": "https://drive.google.com/file/d/1nUtbGl63WrHFXGQ7c0ks-6gPwWBrGWoq/view?usp=drivesdk"
+  },
+  {
+    "id": "video-cadastrar-authenticator-celular",
+    "nome": "Vídeo: cadastrar authenticator pelo celular",
+    "descricao": "Passo a passo em vídeo de como configurar o authenticator (2FA) pelo celular.",
+    "tipo": "link",
+    "url": "https://drive.google.com/file/d/1v4R8jDzg3AmRZNMJpTaKUCmDDjrYvoos/view?usp=drivesdk"
+  },
+  {
+    "id": "video-acesso-portal-authenticator-computador",
+    "nome": "Vídeo: acesso ao portal e authenticator pelo computador",
+    "descricao": "Passo a passo em vídeo de como acessar o portal e configurar o authenticator pelo computador.",
+    "tipo": "link",
+    "url": "https://drive.google.com/file/d/1TuXu_c2_BHGWB5fBlrEuzYL5fn836Gu6/view?usp=drivesdk"
+  },
+  {
+    "id": "video-cadastrar-novo-usuario-portal",
+    "nome": "Vídeo: como cadastrar novo usuário no portal",
+    "descricao": "Passo a passo em vídeo de como cadastrar um novo usuário no portal.",
+    "tipo": "link",
+    "url": "https://drive.google.com/file/d/1cCpSITZWte2tmJxrFYLcOyekCe9gbYtO/view?usp=drivesdk"
+  },
+  {
+    "id": "video-configurar-apn-chip-allcom",
+    "nome": "Vídeo: configurar APN do chip Allcom",
+    "descricao": "Passo a passo em vídeo de como configurar a APN do chip Allcom na máquina.",
+    "tipo": "link",
+    "url": "https://drive.google.com/file/d/1R-zxUa3zifaE8SehRSY834LGa8ZH-1oz/view?usp=drivesdk"
+  }
+]

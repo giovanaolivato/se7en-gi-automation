@@ -1,0 +1,14 @@
+{
+  "name": "se7en-pay-agent",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node --use-bundled-ca --env-file=.env server.js",
+    "test": "node --use-bundled-ca --env-file=.env test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "openai": "^7.6.0"
+  }
+}

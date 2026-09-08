@@ -1,0 +1,17 @@
+services:
+  waha:
+    image: devlikeapro/waha
+    platform: linux/amd64
+    container_name: waha
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./.sessions:/app/.sessions
+    environment:
+      - WHATSAPP_DEFAULT_ENGINE=NOWEB
+      - WAHA_DASHBOARD_ENABLED=true
+      - WAHA_DASHBOARD_USERNAME=admin
+      - WAHA_DASHBOARD_PASSWORD=${DASH_PASS}
+      - WAHA_API_KEY=${API_KEY}
+      - WHATSAPP_RESTART_ALL_SESSIONS=true
